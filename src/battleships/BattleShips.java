@@ -1,5 +1,5 @@
 package battleships;
-import java.util.ArrayList;
+
 import java.util.Arrays;
 import java.util.Random;
 import java.util.Scanner;
@@ -8,6 +8,7 @@ public class BattleShips {
 
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
+		welcome();
 		int maxShipsPlayer=3; 			//How many ships for each player
 		int boardSize=boardSize(); 		//Dynamic board size from user input
 		Scanner input = new Scanner(System.in);
@@ -17,20 +18,35 @@ public class BattleShips {
 		printFieldArr(field); 											//Print board
 		String[]playerShipsCoordinates= playerShips(letterCoordinates, boardSize, maxShipsPlayer);
 		String[]computerShipsCoordinates= computerShipsCoordinates(letterCoordinates, boardSize, maxShipsPlayer);
-		System.out.println("\nMy field: ");
+		System.out.println("My field: ");
 		printFieldPlay(field, playerShipsCoordinates);
 		System.out.println("\nPress enter to battle");
 		input.nextLine();
-
 		boolean win=battleShips(playerShipsCoordinates, computerShipsCoordinates, maxShipsPlayer, field, letterCoordinates, boardSize);
+		if(win)
+		{
+			winMsg();
+		}
+	}
 
+	private static void winMsg() {
+		System.out.println("  *************************************************************************");
+		System.out.println("  *****                                                               *****");
+		System.out.println("  *****                      YOU WON THE GAME                         *****");
+		System.out.println("  *****                                                               *****");
+		System.out.println("  *************************************************************************\n");
+	}
 
+	private static void welcome() {
+		System.out.println("  *************************************************************************");
+		System.out.println("  *****                         Battle Ships                          *****");
+		System.out.println("  *****           Defeat the computer ships in the ocean             *****");
+		System.out.println("  *************************************************************************\n");
 	}
 
 	private static void printFieldPlay(String[][]field, String[]coordinatesArr) {
 		for (int i = 0; i < field.length; i++)
 		{
-
 			printFieldLineDivider(field.length);
 			System.out.println("");
 			for (int j = 0; j < field.length; j++) {
@@ -56,6 +72,7 @@ public class BattleShips {
 			}
 			System.out.println("");
 		}
+		printFieldLineDivider(field.length);
 	}
 
 	private static boolean battleShips(String[] playerShipsCoordinates, String[] computerShipsCoordinates, int maxShipsPlayer, String[][] fields, String[] letterCoordinates, int boardSize) {
@@ -73,7 +90,6 @@ public class BattleShips {
 		System.out.println("");
 		valid=false;
 
-
 		//Check for ship collision, ship on the same coordinate
 
 		for (int i = 0; i < fields.length; i++) {
@@ -86,16 +102,16 @@ public class BattleShips {
 				{
 					if(fields[i][j].equals(playerShipsCoordinates[x]))
 					{
-
 						int y=0;
 						while(y<computerShipsCoordinates.length) // read list of coordinates of computer
 						{
-
 							if(fields[i][j].equals(computerShipsCoordinates[y]))
 							{
 								if(!fields[i][j].equals("@@"))
 								{
 									fields[i][j]="@@";
+									playerShipsCoordinates[y]="*";
+									computerShipsCoordinates[y]="*";
 									playerShips--;
 									computerShips--;
 									break;
@@ -131,7 +147,7 @@ public class BattleShips {
 			{
 				try
 				{
-					System.out.println("\nEnter coordinate to shoot: "); //user input
+					System.out.println("Enter coordinate to shoot: "); //user input
 					inputCoordinate=input.nextLine().toLowerCase().toString();
 					sb.append(inputCoordinate); // StringBuilder to splits up letter coordinate for input validation
 					checkLetterExist=sb.charAt(0); //get coordinate letter
@@ -151,10 +167,10 @@ public class BattleShips {
 							{
 								if(computerShipsCoordinates[i].equals(inputCoordinate))
 								{
-									System.out.println("HIT on "+computerShipsCoordinates[i]+"\n");
+									System.out.println("HIT ON "+computerShipsCoordinates[i].toUpperCase());
+									computerShipsCoordinates[i]="*";
 									hit=true;
 									computerShips--;
-
 
 									for (int y = 0; y < fields.length; y++)
 									{
@@ -174,21 +190,21 @@ public class BattleShips {
 											{
 												System.out.print(fields[y][j]+" | ");
 											}
-
 										}
-
+										
 									}
+									System.out.println("");
+									printFieldLineDivider(fields.length);
 									System.out.println("\n\nPress enter to continue");
 									input.nextLine();
 									System.out.println("");
 									break;
-
 								}
 								i++;
 							}
 							if(!hit)
 							{
-								System.out.println("You missed!");
+								System.out.println("YOU MISSED!");
 								break;
 							}
 						}
@@ -204,30 +220,29 @@ public class BattleShips {
 					}
 
 				} catch (Exception e) {
-					System.out.println("Enter valid coordinat");
+					System.out.println("Enter valid coordinate");
 					valid=false;
 				}
 			}
 
 			//Computer shoots
-			System.out.println("\nComputer turn");
+			System.out.println("Computer turn");
 			int randomX=rn.nextInt(boardSize);
 			int randomY=(rn.nextInt(boardSize))+1;
 			sb.append(letterCoordinates[randomX]);
 			sb.append(randomY);
 			computerChoice=sb.toString();
 			sb.setLength(0);
-
 			int i=0;
 			boolean computerHit=false;
 			while(i<playerShipsCoordinates.length)
 			{
 				if(playerShipsCoordinates[i].equals(computerChoice))
 				{
-					System.out.println("Computer has HIT on "+playerShipsCoordinates[i]+"\n");
+					System.out.println("Computer has HIT on "+playerShipsCoordinates[i]);
+					playerShipsCoordinates[i]="*";
 					computerHit=true;
 					playerShips--;
-
 					for (int y = 0; y < fields.length;y++) {
 						System.out.println("");
 						printFieldLineDivider(fields.length);
@@ -236,7 +251,7 @@ public class BattleShips {
 							if(j==0)				{
 								System.out.print(" | ");
 							}
-							if(playerShipsCoordinates[j].equals(fields[y][j]))
+							if(fields[y][j].equals(computerChoice))
 							{
 								fields[y][j]="@@";
 								System.out.print(fields[y][j]+" | ");
@@ -245,24 +260,23 @@ public class BattleShips {
 							{
 								System.out.print(fields[y][j]+" | ");
 							}
-
 						}
 					}
+					System.out.println("");
+					printFieldLineDivider(fields.length);
 					System.out.println("\n\nPress enter to continue");
 					input.nextLine();
 					System.out.println("");
 					break;
 				}
-
-
 				i++;
 			}
 			if(!computerHit)
 			{
 				System.out.println("Computer missed");
 			}
-			System.out.println("You have "+playerShips+" ");
-			System.out.println("Computer has "+computerShips+" \n");
+			System.out.println("You have "+playerShips+" ships");
+			System.out.println("Computer has "+computerShips+" ships\n");
 
 		}
 
@@ -274,13 +288,9 @@ public class BattleShips {
 		else
 		{
 			System.out.println("you defeated all the computer ships");
+			return true;
 		}
-
-		return false;
 	}
-
-
-
 
 	private static String[] computerShipsCoordinates(String[] letterCoordinates, int boardSize ,int maxShipsPlayer) {
 		String[] shipCoordinatesArr = new String[maxShipsPlayer];
@@ -328,9 +338,6 @@ public class BattleShips {
 				}
 			}
 			while(duplicateField);
-
-
-
 		}
 		return shipCoordinatesArr;
 	}
@@ -402,9 +409,6 @@ public class BattleShips {
 					valid=false;
 				}
 			}
-
-
-
 		}
 		System.out.println("");
 		return shipCoordinatesArr;
@@ -434,10 +438,10 @@ public class BattleShips {
 					System.out.print(" | ");
 				}
 				System.out.print(field[i][j]+" | ");
-
 			}
 			System.out.println("");
 		}
+		printFieldLineDivider(field.length);
 	}
 
 	public static String[][] createFieldArr(int size,String[] letterCoordinates)
@@ -498,13 +502,8 @@ public class BattleShips {
 				System.out.println("Invalid input");
 				input.nextLine(); // Advances the scanner to prevent input errors
 			}
-
 		}
 		while(invalid); // The loop ends when the input is valid
 		return boardSize;
 	}
-
-
-
-
 }
