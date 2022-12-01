@@ -447,15 +447,10 @@ public class BattleShips {
 	public static String[][] createFieldArr(int size,String[] letterCoordinates)
 	{
 		String[][] square = new String[size][size];
-		StringBuilder sb = new StringBuilder();
-		String field;
-		for(int i=0;i<square.length;i++)
-		{
-			for(int j=0;j<square.length;j++)
-			{
-				sb.append(letterCoordinates[i]+""+(j+1));
-				square[i][j]=sb.toString();
-				sb.setLength(0);
+
+		for (int i = 0; i < square.length; i++) {
+			for (int j = 0; j < square.length; j++) {
+				square[i][j]=letterCoordinates[i]+(j+1);
 			}
 		}
 		return square;
