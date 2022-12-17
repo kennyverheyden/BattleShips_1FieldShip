@@ -1,4 +1,4 @@
-"# BattleShips" 
+"# BattleShips one-field ship" 
 
 - One field long ship
 - Dynamic field, player enter the size of the field
